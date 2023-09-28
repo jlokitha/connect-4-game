@@ -11,11 +11,11 @@ public class Winner {
         this.winningPiece = winningPiece;
     }
 
-    public Winner(Piece winningPiece, int col1, int row1, int coll2, int row2) {
+    public Winner(Piece winningPiece, int col1, int row1, int col2, int row2) {
         this.winningPiece = winningPiece;
         this.col1 = col1;
         this.row1 = row1;
-        this.coll2 = coll2;
+        this.col2 = col2;
         this.row2 = row2;
     }
 
@@ -31,8 +31,8 @@ public class Winner {
         this.row1 = row1;
     }
 
-    public void setColl2(int coll2) {
-        this.coll2 = coll2;
+    public void setCol2(int coll2) {
+        this.col2 = coll2;
     }
 
     public void setRow2(int row2) {
