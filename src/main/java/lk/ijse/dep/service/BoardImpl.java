@@ -1,5 +1,6 @@
-package lk.ijse.dep.controller;
+package lk.ijse.dep.service;
 
+import lk.ijse.dep.controller.BoardController;
 import lk.ijse.dep.service.Board;
 import lk.ijse.dep.service.BoardUI;
 import lk.ijse.dep.service.Piece;
