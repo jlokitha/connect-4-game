@@ -14,7 +14,9 @@ public class AiPlayer extends Player {
         int random;
 
         do {
-            random = (int) (Math.random() * 6); // Generate a random integer between 0 and 5
+
+            random = (int) (Math.random() * 6);
+
         } while (!(random >= 0 && random < 6));
 
         if (this.newBoard.isLegalMove(random)) {
