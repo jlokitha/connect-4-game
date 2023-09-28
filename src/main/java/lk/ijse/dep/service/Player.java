@@ -8,10 +8,8 @@ public class Player {
     }
 
     public Player() {
-
     }
 
     public void movePiece (int col) {
-
     }
 }

@@ -8,6 +8,10 @@ public class BoardImpl implements Board {
     private BoardUI boardUI;
 
     public BoardImpl(BoardController boardController) {
+
+        //Child class object is assign to parent class variable.
+        this.boardUI = boardController;
+
         //Initialize all pieces in array as EMPTY.
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 5; j++) {
@@ -16,9 +20,9 @@ public class BoardImpl implements Board {
         }
     }
 
-    public BoardImpl (BoardUI boardUI) {
-        this.boardUI = boardUI;
-    }
+//    public BoardImpl (BoardUI boardUI) {
+//        this.boardUI = boardUI;
+//    }
 
     @Override
     public BoardUI getBoardUI() {
@@ -27,6 +31,7 @@ public class BoardImpl implements Board {
 
     @Override
     public int findNextAvailableSpot(int col) {
+
         //Check if there is any spot as EMPTY in provide column.
         for (int i = 0; i < 5; i++) {
             if (pieces[col][i] == Piece.EMPTY) {
