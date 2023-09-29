@@ -101,4 +101,11 @@ public class BoardImpl implements Board {
         //If there is no winner.
         return new Winner(Piece.EMPTY, -1, -1, -1, -1);
     }
+
+    @Override
+    public void updateMove(int col, int row, Piece move) {
+        if (pieces[col][row] == Piece.EMPTY) {
+            pieces[col][row] = move;
+        }
+    }
 }
