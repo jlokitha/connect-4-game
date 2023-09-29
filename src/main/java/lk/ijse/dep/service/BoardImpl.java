@@ -20,10 +20,6 @@ public class BoardImpl implements Board {
         }
     }
 
-//    public BoardImpl (BoardUI boardUI) {
-//        this.boardUI = boardUI;
-//    }
-
     @Override
     public BoardUI getBoardUI() {
         return boardUI;

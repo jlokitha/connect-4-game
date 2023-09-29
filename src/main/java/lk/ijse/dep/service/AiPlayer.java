@@ -11,18 +11,16 @@ public class AiPlayer extends Player {
     @Override
     public void movePiece(int col) {
 
-        int random;
-
         do {
 
-            random = (int) (Math.random() * 6);
+            col = (int) (Math.random() * 6);
 
-        } while (!(random >= 0 && random < 6));
+        } while (!(col >= 0 && col < 6) || !this.newBoard.isLegalMove(col));
 
-        if (this.newBoard.isLegalMove(random)) {
+        if (this.newBoard.isLegalMove(col)) {
 
-            this.newBoard.updateMove(random, Piece.GREEN);
-            this.newBoard.getBoardUI().update(random, false);
+            this.newBoard.updateMove(col, Piece.GREEN);
+            this.newBoard.getBoardUI().update(col, false);
 
             if (this.newBoard.findWinner().getWinningPiece() == Piece.EMPTY) {
 
