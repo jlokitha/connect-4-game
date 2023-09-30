@@ -2,13 +2,17 @@ package lk.ijse.dep.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class AiPlayer extends Player {
 
-    private Board newBoard;
+    Board newBoard;
+
+    static AiPlayer aiPlayer;
 
     public AiPlayer(Board newBoard) {
         this.newBoard = newBoard;
+        aiPlayer = this;
     }
 
     @Override
@@ -97,6 +101,42 @@ public class AiPlayer extends Player {
 
             private boolean isValidMove(int column) {
                 return board[column][4] == Piece.EMPTY;
+            }
+
+            public int simulation() {
+                Piece winner = aiPlayer.newBoard.findWinner().getWinningPiece();
+
+                // If there is a winner, return the result
+                if (winner != Piece.EMPTY) {
+                    return winner == Piece.BLUE ? 1 : -1; // Player 1 wins: 1, Player 2 wins: -1
+                }
+
+                // If the game is a draw, return 0
+                if (aiPlayer.newBoard.exitsLegalMoves()) {
+                    return 0;
+                }
+
+                // Otherwise, continue the simulation with a random move
+                Random rand = new Random();
+                int randomColumn;
+                do {
+                    randomColumn = rand.nextInt(7);
+                } while (!isValidMove(randomColumn));
+
+                Piece[][] newBoard = makeMove(randomColumn);
+                int newPlayer = 3 - currentPlayer; // Switch player
+                Node newNode = new Node(newBoard, newPlayer);
+
+                return newNode.simulation();
+            }
+
+            public void backpropagation(int outcome) {
+                visits++;
+                totalValue += outcome;
+
+                if (parent != null) {
+                    parent.backpropagation(outcome);
+                }
             }
         }
 
