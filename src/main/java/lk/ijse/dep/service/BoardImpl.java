@@ -7,7 +7,11 @@ public class BoardImpl implements Board {
     private Piece[][] pieces = new Piece[6][5];
     private BoardUI boardUI;
 
+    static Piece[][] board;
+
     public BoardImpl(BoardController boardController) {
+
+        board = pieces;
 
         //Child class object is assign to parent class variable.
         this.boardUI = boardController;
@@ -107,5 +111,9 @@ public class BoardImpl implements Board {
         if (pieces[col][row] == Piece.EMPTY) {
             pieces[col][row] = move;
         }
+    }
+
+    static Piece[][] getPieces() {
+        return board;
     }
 }

@@ -17,27 +17,37 @@ public class AiPlayer extends Player {
 
     @Override
     public void movePiece(int col) {
+        MctsAlgorithm mcts = new MctsAlgorithm();
 
-        do {
+        // Assuming you have an initial Node to start with
+        MctsAlgorithm.Node rootNode = new MctsAlgorithm.Node(BoardImpl.getPieces(), 2); // Assuming AI starts
 
-            col = (int) (Math.random() * 6);
+        int iterations = 1000; // Choose the number of iterations
 
-        } while (!(col >= 0 && col < 6) || !this.newBoard.isLegalMove(col));
+        for (int i = 0; i < iterations; i++) {
+            MctsAlgorithm.Node selectedNode = mcts.selection(rootNode);
 
-        if (this.newBoard.isLegalMove(col)) {
-
-            this.newBoard.updateMove(col, Piece.GREEN);
-            this.newBoard.getBoardUI().update(col, false);
-
-            if (this.newBoard.findWinner().getWinningPiece() == Piece.EMPTY) {
-
-                if (!this.newBoard.exitsLegalMoves()) {
-                    this.newBoard.getBoardUI().notifyWinner(this.newBoard.findWinner());
-                }
-
-            } else {
-                this.newBoard.getBoardUI().notifyWinner(this.newBoard.findWinner());
+            if (!selectedNode.children.isEmpty()) {
+                List<MctsAlgorithm.Node> expandedNodes = rootNode.expand(selectedNode);
+                MctsAlgorithm.Node expandedNode = expandedNodes.get(0); // Assuming you're selecting the first expanded node
+                int outcome = rootNode.simulation(expandedNode);
+                rootNode.backpropagation(expandedNode, outcome);
             }
+        }
+
+        // After the iterations, choose the best move based on the MCTS statistics
+        int bestMove = mcts.getBestMove(rootNode);
+
+        // Make the best move on the board
+        newBoard.updateMove(bestMove, Piece.GREEN);
+        newBoard.getBoardUI().update(bestMove, false);
+
+        if (newBoard.findWinner().getWinningPiece() == Piece.EMPTY) {
+            if (!newBoard.exitsLegalMoves()) {
+                newBoard.getBoardUI().notifyWinner(newBoard.findWinner());
+            }
+        } else {
+            newBoard.getBoardUI().notifyWinner(newBoard.findWinner());
         }
     }
 
@@ -45,9 +55,9 @@ public class AiPlayer extends Player {
 
         static class Node {
             //2D array to represent the current state of the game.
-            Piece[][] board;
+            static Piece[][] board;
             //Current playing player(Human = 1, Ai = 2).
-            int currentPlayer;
+            static int currentPlayer;
             //Calculate visits.
             int visits;
             //Calculate the total value of the node.
@@ -63,14 +73,14 @@ public class AiPlayer extends Player {
                 this.children = new ArrayList<>();
             }
 
-            public List<Node> expand() {
+            public List<Node> expand(Node node) {
                 List<Node> legalMoves = new ArrayList<>();
 
                 // Generate child nodes for legal moves
                 for (int i = 0; i < 6; i++) {
                     if (isValidMove(i)) {
                         Piece[][] newBoard = makeMove(i);
-                        int newPlayer = 3 - currentPlayer; // Switch player
+                        int newPlayer = 3 - node.currentPlayer; // Switch player
                         Node newNode = new Node(newBoard, newPlayer);
                         newNode.parent = this;
                         legalMoves.add(newNode);
@@ -81,7 +91,7 @@ public class AiPlayer extends Player {
                 return legalMoves;
             }
 
-            private Piece[][] makeMove(int column) {
+            private static Piece[][] makeMove(int column) {
                 Piece[][] newBoard = new Piece[6][5];
                 for (int i = 0; i < 6; i++) {
                     System.arraycopy(board[i], 0, newBoard[i], 0, 5);
@@ -99,11 +109,11 @@ public class AiPlayer extends Player {
                 return newBoard;
             }
 
-            private boolean isValidMove(int column) {
+            private static boolean isValidMove(int column) {
                 return board[column][4] == Piece.EMPTY;
             }
 
-            public int simulation() {
+            public int simulation(Node node) {
                 Piece winner = aiPlayer.newBoard.findWinner().getWinningPiece();
 
                 // If there is a winner, return the result
@@ -127,15 +137,15 @@ public class AiPlayer extends Player {
                 int newPlayer = 3 - currentPlayer; // Switch player
                 Node newNode = new Node(newBoard, newPlayer);
 
-                return newNode.simulation();
+                return newNode.simulation(node);
             }
 
-            public void backpropagation(int outcome) {
+            public void backpropagation(Node node, int outcome) {
                 visits++;
                 totalValue += outcome;
 
                 if (parent != null) {
-                    parent.backpropagation(outcome);
+                    parent.backpropagation(node, outcome);
                 }
             }
         }
@@ -165,6 +175,33 @@ public class AiPlayer extends Player {
         private double calculateValue(Node child) {
             double explorationTerm = Math.sqrt(Math.log(child.parent.visits) / child.visits);
             return child.totalValue / child.visits + 2 * explorationTerm;
+        }
+
+        public int getBestMove(Node node) {
+            double maxChildValue = Double.MIN_VALUE;
+            int bestMove = -1;
+
+            for (Node child : node.children) {
+                double childValue = child.totalValue / child.visits;
+                if (childValue > maxChildValue) {
+                    maxChildValue = childValue;
+                    bestMove = findColumn(node.board, child.board);
+                }
+            }
+
+            return bestMove;
+        }
+
+        private int findColumn(Piece[][] parentBoard, Piece[][] childBoard) {
+            // Find the column where the boards differ (i.e., where the move was made)
+            for (int col = 0; col < parentBoard.length; col++) {
+                for (int row = 0; row < parentBoard[0].length; row++) {
+                    if (parentBoard[col][row] != childBoard[col][row]) {
+                        return col;
+                    }
+                }
+            }
+            return -1; // No move found
         }
     }
 }
