@@ -85,7 +85,7 @@ public class BoardImpl implements Board {
                             currentPiece == pieces[i][j + 1] &&
                             currentPiece == pieces[i][j + 2] &&
                             currentPiece == pieces[i][j + 3]) {
-                        return new Winner(currentPiece, i, j, i + 3, j);
+                        return new Winner(currentPiece, i, j, i, j + 3);
                     }
 
                     //Horizontal check.
@@ -93,7 +93,7 @@ public class BoardImpl implements Board {
                             currentPiece == pieces[i + 1][j] &&
                             currentPiece == pieces[i + 2][j] &&
                             currentPiece == pieces[i + 3][j]) {
-                        return new Winner(currentPiece, i, j, i, j + 3);
+                        return new Winner(currentPiece, i, j, i + 3, j);
                     }
                 }
             }
