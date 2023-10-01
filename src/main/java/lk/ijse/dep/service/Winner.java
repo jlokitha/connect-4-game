@@ -9,6 +9,10 @@ public class Winner {
 
     public Winner(Piece winningPiece) {
         this.winningPiece = winningPiece;
+        col1 = -1;
+        col2 = -1;
+        row1 = -1;
+        row2 = -1;
     }
 
     public Winner(Piece winningPiece, int col1, int row1, int col2, int row2) {

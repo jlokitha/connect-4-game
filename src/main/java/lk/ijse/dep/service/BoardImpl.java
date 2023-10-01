@@ -9,12 +9,12 @@ public class BoardImpl implements Board {
 
     static Piece[][] board;
 
-    public BoardImpl(BoardController boardController) {
+    public BoardImpl(BoardUI boardUI) {
 
         board = pieces;
 
         //Child class object is assign to parent class variable.
-        this.boardUI = boardController;
+        this.boardUI = boardUI;
 
         //Initialize all pieces in array as EMPTY.
         for (int i = 0; i < 6; i++) {
@@ -103,14 +103,12 @@ public class BoardImpl implements Board {
             }
         }
         //If there is no winner.
-        return new Winner(Piece.EMPTY, -1, -1, -1, -1);
+        return new Winner(Piece.EMPTY);
     }
 
     @Override
     public void updateMove(int col, int row, Piece move) {
-        if (pieces[col][row] == Piece.EMPTY) {
             pieces[col][row] = move;
-        }
     }
 
     static Piece[][] getPieces() {
