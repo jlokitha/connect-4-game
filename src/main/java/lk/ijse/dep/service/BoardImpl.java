@@ -9,6 +9,12 @@ public class BoardImpl implements Board {
 
     static Piece[][] board;
 
+    void setBoard(Piece[][] pieces) {
+        board = pieces;
+    }
+
+    public BoardImpl() {}
+
     public BoardImpl(BoardUI boardUI) {
 
         board = pieces;
