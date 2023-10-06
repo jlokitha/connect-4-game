@@ -1,8 +1,6 @@
 package lk.ijse.dep.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class AiPlayer extends Player {
 
@@ -108,6 +106,31 @@ public class AiPlayer extends Player {
                 }
             }
             return moves;
+        }
+
+        private Node select(Node tree) {
+            Node node=tree;
+            while (node.children.size()!=0){
+                node = findBestNodeWithUCT(node);
+            }
+            return node;
+        }
+
+        private Node findBestNodeWithUCT(Node node) {
+            int parentVisit = node.visit;
+            return Collections.max(
+                    node.children,
+                    Comparator.comparing(c -> uctValue(parentVisit,
+                            c.value, c.visit)));
+        }
+
+        private double uctValue(
+                int totalVisit, double nodeWinScore, int nodeVisit) {
+            if (nodeVisit == 0) {
+                return Integer.MAX_VALUE;
+            }
+            return ((double) nodeWinScore / (double) nodeVisit)
+                    + 1.41 * Math.sqrt(Math.log(totalVisit) / (double) nodeVisit);
         }
     }
 }
