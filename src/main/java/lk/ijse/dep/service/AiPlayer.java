@@ -96,6 +96,32 @@ public class AiPlayer extends Player {
             return node.children.get(random);
         }
 
+//        private Piece simulate(Node promisingNode) {
+//
+//
+//            Node node = new Node(promisingNode.board);
+//            node.parent = promisingNode.parent;
+//
+//            Winner winner = node.board.findWinner();
+//
+//            if (winner.getWinningPiece() == Piece.BLUE){
+//                node.parent.value = Integer.MIN_VALUE;
+//
+//                return node.board.findWinner().getWinningPiece();
+//            }
+//
+//
+//            while (node.board.getStatus()){
+//                BoardImpl nextMove=node.board.getRandomLeagalNextMove();
+//                Node child = new Node(nextMove);
+//                child.parent=node;
+//                node.addChild(child);
+//                node=child;
+//            }
+//
+//            return node.board.findWinner().getWinningPiece();
+//        }
+
         private void backPropagation(Piece resultPiece, Node selected) {
 
             Node node=selected;
