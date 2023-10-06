@@ -72,6 +72,14 @@ public class AiPlayer extends Player {
             oppositePlayerId = 3 - playerId;
         }
 
+        private Node select(Node tree) {
+            Node node=tree;
+            while (node.children.size()!=0){
+                node = findBestNodeWithUCT(node);
+            }
+            return node;
+        }
+
         Node Expand (Node node) {
             BoardImpl board = node.board;
 
@@ -86,6 +94,20 @@ public class AiPlayer extends Player {
             int random = rand.nextInt(node.children.size());
 
             return node.children.get(random);
+        }
+
+        private void backPropagation(Piece resultPiece, Node selected) {
+
+            Node node=selected;
+
+            while (node!=null){
+                node.visit++;
+
+                if (node.board.getPlayer() == resultPiece){
+                    node.value++;
+                }
+                node = node.parent;
+            }
         }
 
         private List<BoardImpl> getAllLegalMoves(BoardImpl board) {
@@ -106,14 +128,6 @@ public class AiPlayer extends Player {
                 }
             }
             return moves;
-        }
-
-        private Node select(Node tree) {
-            Node node=tree;
-            while (node.children.size()!=0){
-                node = findBestNodeWithUCT(node);
-            }
-            return node;
         }
 
         private Node findBestNodeWithUCT(Node node) {
