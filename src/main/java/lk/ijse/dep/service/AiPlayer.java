@@ -1,18 +1,15 @@
 package lk.ijse.dep.service;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class AiPlayer extends Player {
 
-    Board newBoard;
-
     AiPlayer aiPlayer;
 
-    public AiPlayer(Board newBoard) {
-        this.newBoard = newBoard;
+    public AiPlayer(Board board) {
+        super(board);
         aiPlayer = this;
     }
 
@@ -22,32 +19,32 @@ public class AiPlayer extends Player {
             col = (int) (Math.random() * 6); // Generate a random integer between 0 and 5
         } while (!(col >= 0 && col < 6));
 
-        if (this.newBoard.isLegalMove(col)) {
+        if (this.board.isLegalMove(col)) {
 
-            this.newBoard.updateMove(col, Piece.GREEN);
-            this.newBoard.getBoardUI().update(col, false);
+            this.board.updateMove(col, Piece.GREEN);
+            this.board.getBoardUI().update(col, false);
 
-            if (this.newBoard.findWinner().getWinningPiece() == Piece.EMPTY) {
+            if (this.board.findWinner().getWinningPiece() == Piece.EMPTY) {
 
-                if (!this.newBoard.exitsLegalMoves()) {
-                    this.newBoard.getBoardUI().notifyWinner(this.newBoard.findWinner());
+                if (!this.board.exitsLegalMoves()) {
+                    this.board.getBoardUI().notifyWinner(this.board.findWinner());
                 }
 
             } else {
-                this.newBoard.getBoardUI().notifyWinner(this.newBoard.findWinner());
+                this.board.getBoardUI().notifyWinner(this.board.findWinner());
             }
         }
     }
 
     static class MctsAlgorithm {
         static class Node {
-            Board board;
+            BoardImpl board;
             int value;
             int visit;
             Node parent;
             List<Node> children = new ArrayList<>();
 
-            public Node(Board board) {
+            public Node(BoardImpl board) {
                 this.board = board;
             }
 
@@ -67,20 +64,20 @@ public class AiPlayer extends Player {
             }
         }
 
-        Board board;
+        BoardImpl board;
         int playerId;
         int oppositePlayerId;
 
-        public MctsAlgorithm (Board board, int playerId) {
+        public MctsAlgorithm (BoardImpl board, int playerId) {
             this.board = board;
             this.playerId = playerId;
             oppositePlayerId = 3 - playerId;
         }
 
         Node Expand (Node node) {
-            Board board = node.board;
+            BoardImpl board = node.board;
 
-            for (Board move : getAllLegalMoves(board)) {
+            for (BoardImpl move : getAllLegalMoves(board)) {
                 Node child = new Node(move);
                 child.parent = node;
                 node.addChild(child);
@@ -93,20 +90,24 @@ public class AiPlayer extends Player {
             return node.children.get(random);
         }
 
-        private Board[] getAllLegalMoves(Board board) {
+        private List<BoardImpl> getAllLegalMoves(BoardImpl board) {
 
-            List<Board> moves = new ArrayList<>();
-            Piece[][] pieces = BoardImpl.getPieces();
+            Piece nextPlayer = board.getPlayer() == Piece.BLUE ? Piece.GREEN : Piece.BLUE;
+
+            List<BoardImpl> moves = new ArrayList<>();
 
             outerLoop:
             for (int i = 0; i < 6; i++) {
-                for (int j = 0; j < 5; j++) {
-                    if (pieces[i][j] == Piece.EMPTY) {
-                        Board temp = new BoardImpl();
-                        moves.add(((BoardImpl) temp).setBoard(pieces[i][j]));
-                    }
+
+                int raw = board.findNextAvailableSpot(i);
+
+                if (raw != -1){
+                    BoardImpl legalMove = new BoardImpl(board.getPieces(), board.getBoardUI());
+                    legalMove.updateMove(i, nextPlayer);
+                    moves.add(legalMove);
                 }
             }
+            return moves;
         }
     }
 }

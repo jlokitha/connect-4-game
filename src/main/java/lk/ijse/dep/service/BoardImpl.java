@@ -4,20 +4,18 @@ import lk.ijse.dep.controller.BoardController;
 
 public class BoardImpl implements Board {
 
-    private Piece[][] pieces = new Piece[6][5];
+    private Piece[][] pieces;
     private BoardUI boardUI;
 
-    static Piece[][] board;
+    private Piece player;
 
-    void setBoard(Piece[][] pieces) {
-        board = pieces;
-    }
 
     public BoardImpl() {}
 
     public BoardImpl(BoardUI boardUI) {
 
-        board = pieces;
+        pieces = new Piece[6][5];
+
 
         //Child class object is assign to parent class variable.
         this.boardUI = boardUI;
@@ -28,6 +26,16 @@ public class BoardImpl implements Board {
                 pieces[i][j] = Piece.EMPTY;
             }
         }
+    }
+
+    public BoardImpl(Piece[][] pieces, BoardUI boardUI) {
+        this.pieces=new Piece[6][5];
+        for (int i = 0; i < pieces.length; i++) {
+            for (int j = 0; j < pieces[i].length; j++) {
+                this.pieces[i][j]=pieces[i][j];
+            }
+        }
+        this.boardUI = boardUI;
     }
 
     @Override
@@ -70,8 +78,15 @@ public class BoardImpl implements Board {
         return false; //Return false if there is not.
     }
 
+    public Piece getPlayer() {
+        return player;
+    }
+
     @Override
     public void updateMove(int col, Piece move) {
+
+        this.player = move;
+
         //Find the first EMPTY spot in provide colum and change the value from EMPTY to value of move.
         for (int i = 0; i < 5; i++) {
             if (pieces[col][i] == Piece.EMPTY) {
@@ -117,7 +132,7 @@ public class BoardImpl implements Board {
             pieces[col][row] = move;
     }
 
-    static Piece[][] getPieces() {
-        return board;
+    public Piece[][] getPieces() {
+        return pieces;
     }
 }
