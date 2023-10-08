@@ -4,11 +4,8 @@ import java.util.*;
 
 public class AiPlayer extends Player {
 
-    AiPlayer aiPlayer;
-
     public AiPlayer(Board board) {
         super(board);
-        aiPlayer = this;
     }
 
     @Override

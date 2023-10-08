@@ -7,9 +7,5 @@ public class Player {
         this.board = board;
     }
 
-    public Player() {
-    }
-
-    public void movePiece (int col) {
-    }
+    public void movePiece (int col) {}
 }

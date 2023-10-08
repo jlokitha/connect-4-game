@@ -23,26 +23,6 @@ public class Winner {
         this.row2 = row2;
     }
 
-    public void setWinningPiece(Piece winningPiece) {
-        this.winningPiece = winningPiece;
-    }
-
-    public void setCol1(int col1) {
-        this.col1 = col1;
-    }
-
-    public void setRow1(int row1) {
-        this.row1 = row1;
-    }
-
-    public void setCol2(int coll2) {
-        this.col2 = coll2;
-    }
-
-    public void setRow2(int row2) {
-        this.row2 = row2;
-    }
-
     public Piece getWinningPiece() {
         return winningPiece;
     }
