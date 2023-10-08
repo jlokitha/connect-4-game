@@ -13,9 +13,13 @@ public class AiPlayer extends Player {
 
     @Override
     public void movePiece(int col) {
-        do {
-            col = (int) (Math.random() * 6); // Generate a random integer between 0 and 5
-        } while (!(col >= 0 && col < 6));
+//        do {
+//            col = (int) (Math.random() * 6); // Generate a random integer between 0 and 5
+//        } while (!(col >= 0 && col < 6) || !(board.isLegalMove(col)));
+
+        MctsAlgorithm mcts = new MctsAlgorithm(board.getBoardImpl());
+
+        col=mcts.doMcts();
 
         if (this.board.isLegalMove(col)) {
 
@@ -35,6 +39,7 @@ public class AiPlayer extends Player {
     }
 
     static class MctsAlgorithm {
+
         static class Node {
             BoardImpl board;
             int value;
@@ -66,10 +71,49 @@ public class AiPlayer extends Player {
         int playerId;
         int oppositePlayerId;
 
-        public MctsAlgorithm (BoardImpl board, int playerId) {
+        public MctsAlgorithm(BoardImpl board) {
             this.board = board;
-            this.playerId = playerId;
-            oppositePlayerId = 3 - playerId;
+        }
+
+        public int doMcts(){
+            System.out.println("MCTS working.");
+            int count=0;
+
+            Node tree= new Node(board);
+
+            while (count<4000){
+                count++;
+
+
+                //System.out.println(count);
+
+                //Select Node
+                Node promisingNode = select(tree);
+
+                //Expand Node
+                Node selected=promisingNode;
+
+                if (selected.board.getStatus()){
+                    selected= expand(promisingNode);
+
+                }
+
+
+                //Simulate
+                Piece resultPiece=simulate(selected);
+
+                //Propagate
+                backPropagation(resultPiece,selected);
+
+
+            }
+
+            Node best= tree.getMaxValueChild();
+
+            System.out.println("Best move scored " + best.value + " and was visited " + best.visit + " times");
+
+            return best.board.col;
+
         }
 
         private Node select(Node tree) {
@@ -80,7 +124,7 @@ public class AiPlayer extends Player {
             return node;
         }
 
-        Node Expand (Node node) {
+        Node expand (Node node) {
             BoardImpl board = node.board;
 
             for (BoardImpl move : getAllLegalMoves(board)) {
@@ -96,31 +140,31 @@ public class AiPlayer extends Player {
             return node.children.get(random);
         }
 
-//        private Piece simulate(Node promisingNode) {
-//
-//
-//            Node node = new Node(promisingNode.board);
-//            node.parent = promisingNode.parent;
-//
-//            Winner winner = node.board.findWinner();
-//
-//            if (winner.getWinningPiece() == Piece.BLUE){
-//                node.parent.value = Integer.MIN_VALUE;
-//
-//                return node.board.findWinner().getWinningPiece();
-//            }
-//
-//
-//            while (node.board.getStatus()){
-//                BoardImpl nextMove=node.board.getRandomLeagalNextMove();
-//                Node child = new Node(nextMove);
-//                child.parent=node;
-//                node.addChild(child);
-//                node=child;
-//            }
-//
-//            return node.board.findWinner().getWinningPiece();
-//        }
+        private Piece simulate(Node promisingNode) {
+
+
+            Node node = new Node(promisingNode.board);
+            node.parent = promisingNode.parent;
+
+            Winner winner = node.board.findWinner();
+
+            if (winner.getWinningPiece() == Piece.BLUE){
+                node.parent.value = Integer.MIN_VALUE;
+
+                return node.board.findWinner().getWinningPiece();
+            }
+
+
+            while (node.board.getStatus()){
+                BoardImpl nextMove=node.board.getRandomLeagalNextMove();
+                Node child = new Node(nextMove);
+                child.parent=node;
+                node.addChild(child);
+                node=child;
+            }
+
+            return node.board.findWinner().getWinningPiece();
+        }
 
         private void backPropagation(Piece resultPiece, Node selected) {
 

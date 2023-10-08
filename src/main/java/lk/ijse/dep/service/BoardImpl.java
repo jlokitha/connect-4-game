@@ -2,12 +2,17 @@ package lk.ijse.dep.service;
 
 import lk.ijse.dep.controller.BoardController;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 public class BoardImpl implements Board {
 
     private Piece[][] pieces;
     private BoardUI boardUI;
 
     private Piece player;
+    public int col;
 
 
     public BoardImpl() {}
@@ -85,6 +90,7 @@ public class BoardImpl implements Board {
     @Override
     public void updateMove(int col, Piece move) {
 
+        this.col = col;
         this.player = move;
 
         //Find the first EMPTY spot in provide colum and change the value from EMPTY to value of move.
@@ -134,5 +140,52 @@ public class BoardImpl implements Board {
 
     public Piece[][] getPieces() {
         return pieces;
+    }
+
+    public boolean getStatus(){
+        if (!exitsLegalMoves()){
+            return false;
+        }
+
+        Winner winner=findWinner();
+        if (winner.getWinningPiece() != Piece.EMPTY){
+
+            return false;
+        }
+        return true;
+    }
+
+    public BoardImpl getRandomLeagalNextMove() {
+        final List<BoardImpl> legalMoves = getAllLegalNextMoves();
+
+        if (legalMoves.isEmpty()) {
+            return null;
+        }
+
+        final int random= new Random().nextInt(legalMoves.size());
+        return legalMoves.get(random);
+
+    }
+
+    public List<BoardImpl> getAllLegalNextMoves() {
+
+        Piece nextPiece = player == Piece.BLUE?Piece.GREEN:Piece.BLUE;
+
+        List<BoardImpl> nextMoves = new ArrayList<>();
+
+        for (int i = 0; i < 6; i++) {
+            int raw=findNextAvailableSpot(i);
+            if (raw!=-1){
+                BoardImpl legalMove=new BoardImpl(this.pieces,this.boardUI);
+                legalMove.updateMove(i,nextPiece);
+                nextMoves.add(legalMove);
+            }
+        }
+        return  nextMoves;
+    }
+
+    @Override
+    public BoardImpl getBoardImpl() {
+        return this;
     }
 }
