@@ -8,7 +8,6 @@ public class BoardImpl implements Board {
 
     private Piece[][] pieces;
     private BoardUI boardUI;
-
     private Piece player;
 
     public int col;
@@ -17,13 +16,13 @@ public class BoardImpl implements Board {
 
         pieces = new Piece[6][5];
 
-
         //Child class object is assign to parent class variable.
         this.boardUI = boardUI;
 
         //Initialize all pieces in array as EMPTY.
         for (int i = 0; i < NUM_OF_COLS; i++) {
             for (int j = 0; j < NUM_OF_COLS; j++) {
+
                 pieces[i][j] = Piece.EMPTY;
             }
         }
@@ -66,6 +65,7 @@ public class BoardImpl implements Board {
         int rowNo = findNextAvailableSpot(col);
         //Check if the returned num is -1 or not.
         if (rowNo > -1) {
+
             return true; //Return true if rowNo is not -1.
         }
         return false; //Return false if rowNo is -1.
