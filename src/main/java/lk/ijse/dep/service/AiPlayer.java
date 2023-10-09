@@ -11,6 +11,12 @@ public class AiPlayer extends Player {
     @Override
     public void movePiece(int col) {
 
+//        do {
+
+//            col =  (int) (Math.random() * 6);
+
+//        } while (!(col > -1 && col < 6) || !(board.isLegalMove(col)));
+
         MctsAlgorithm mcts = new MctsAlgorithm(board.getBoardImpl());
 
         col = mcts.doMcts();
@@ -65,15 +71,13 @@ public class AiPlayer extends Player {
         }
 
         BoardImpl board;
-        int playerId;
-        int oppositePlayerId;
 
         public MctsAlgorithm(BoardImpl board) {
             this.board = board;
         }
 
         public int doMcts(){
-            System.out.println("MCTS working.");
+
             int count=0;
 
             Node tree= new Node(board);
@@ -92,16 +96,14 @@ public class AiPlayer extends Player {
 
                 }
 
-                //Simulate
                 Piece resultPiece=simulate(selected);
 
-                //Propagate
                 backPropagation(resultPiece,selected);
             }
 
             Node best= tree.getMaxValueChild();
 
-            System.out.println("Best move scored " + best.value + " and was visited " + best.visit + " times");
+            System.out.println("Value " + best.value + " / Visits " + best.visit);
 
             return best.board.col;
         }
