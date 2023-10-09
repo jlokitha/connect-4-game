@@ -10,13 +10,10 @@ public class AiPlayer extends Player {
 
     @Override
     public void movePiece(int col) {
-//        do {
-//            col = (int) (Math.random() * 6); // Generate a random integer between 0 and 5
-//        } while (!(col >= 0 && col < 6) || !(board.isLegalMove(col)));
 
         MctsAlgorithm mcts = new MctsAlgorithm(board.getBoardImpl());
 
-        col=mcts.doMcts();
+        col = mcts.doMcts();
 
         if (this.board.isLegalMove(col)) {
 
@@ -26,17 +23,18 @@ public class AiPlayer extends Player {
             if (this.board.findWinner().getWinningPiece() == Piece.EMPTY) {
 
                 if (!this.board.exitsLegalMoves()) {
+
                     this.board.getBoardUI().notifyWinner(this.board.findWinner());
                 }
 
             } else {
+
                 this.board.getBoardUI().notifyWinner(this.board.findWinner());
             }
         }
     }
 
     static class MctsAlgorithm {
-
         static class Node {
             BoardImpl board;
             int value;
@@ -52,7 +50,9 @@ public class AiPlayer extends Player {
                 Node result = children.get(0);
 
                 for (int i = 1; i < children.size(); i++) {
+
                     if (children.get(i).value > result.value) {
+
                         result = children.get(i);
                     }
                 }
@@ -81,9 +81,6 @@ public class AiPlayer extends Player {
             while (count<4000){
                 count++;
 
-
-                //System.out.println(count);
-
                 //Select Node
                 Node promisingNode = select(tree);
 
@@ -95,14 +92,11 @@ public class AiPlayer extends Player {
 
                 }
 
-
                 //Simulate
                 Piece resultPiece=simulate(selected);
 
                 //Propagate
                 backPropagation(resultPiece,selected);
-
-
             }
 
             Node best= tree.getMaxValueChild();
@@ -110,12 +104,12 @@ public class AiPlayer extends Player {
             System.out.println("Best move scored " + best.value + " and was visited " + best.visit + " times");
 
             return best.board.col;
-
         }
 
         private Node select(Node tree) {
             Node node=tree;
             while (node.children.size()!=0){
+
                 node = findBestNodeWithUCT(node);
             }
             return node;
@@ -129,7 +123,6 @@ public class AiPlayer extends Player {
                 child.parent = node;
                 node.addChild(child);
             }
-
             Random rand = new Random();
 
             int random = rand.nextInt(node.children.size());
@@ -138,7 +131,6 @@ public class AiPlayer extends Player {
         }
 
         private Piece simulate(Node promisingNode) {
-
 
             Node node = new Node(promisingNode.board);
             node.parent = promisingNode.parent;
@@ -150,8 +142,6 @@ public class AiPlayer extends Player {
 
                 return node.board.findWinner().getWinningPiece();
             }
-
-
             while (node.board.getStatus()){
                 BoardImpl nextMove=node.board.getRandomLeagalNextMove();
                 Node child = new Node(nextMove);

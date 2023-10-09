@@ -14,31 +14,19 @@ public class BoardImpl implements Board {
 
     public BoardImpl(BoardUI boardUI) {
 
-        pieces = new Piece[6][5];
+        //Initialize the board array.
+        pieces = new Piece[NUM_OF_COLS][NUM_OF_ROWS];
 
         //Child class object is assign to parent class variable.
         this.boardUI = boardUI;
 
         //Initialize all pieces in array as EMPTY.
         for (int i = 0; i < NUM_OF_COLS; i++) {
-            for (int j = 0; j < NUM_OF_COLS; j++) {
+            for (int j = 0; j < NUM_OF_ROWS; j++) {
 
                 pieces[i][j] = Piece.EMPTY;
             }
         }
-    }
-
-    public BoardImpl(Piece[][] pieces, BoardUI boardUI) {
-
-        this.pieces=new Piece[6][5];
-
-        for (int i = 0; i < NUM_OF_COLS; i++) {
-            for (int j = 0; j < NUM_OF_ROWS; j++) {
-
-                this.pieces[i][j]=pieces[i][j];
-            }
-        }
-        this.boardUI = boardUI;
     }
 
     @Override
@@ -62,32 +50,22 @@ public class BoardImpl implements Board {
 
     @Override
     public boolean isLegalMove(int col) {
-        int rowNo = findNextAvailableSpot(col);
-        //Check if the returned num is -1 or not.
-        if (rowNo > -1) {
 
-            return true; //Return true if rowNo is not -1.
-        }
-        return false; //Return false if rowNo is -1.
+        //Check for any EMPTY spots in the provided column.
+        return findNextAvailableSpot(col) > -1;
+
     }
 
     @Override
     public boolean exitsLegalMoves() {
+
         //Check whole board to find there is any EMPTY spots.
         for (int i = 0; i < NUM_OF_COLS; i++) {
-            for (int j = 0; j < NUM_OF_ROWS; j++) {
-
-                if (pieces[i][j] == Piece.EMPTY) {
-
-                    return true; //Return true if there is.
-                }
+            if (isLegalMove(i)) {
+                return true;
             }
         }
         return false; //Return false if there is not.
-    }
-
-    public Piece getPlayer() {
-        return player;
     }
 
     @Override
@@ -96,22 +74,19 @@ public class BoardImpl implements Board {
         this.col = col;
         this.player = move;
 
-        //Find the first EMPTY spot in provide colum and change the value from EMPTY to value of move.
-        for (int i = 0; i < NUM_OF_ROWS; i++) {
-
-            if (pieces[col][i] == Piece.EMPTY) {
-
-                pieces[col][i] = move;
-                break; //Break the for loop after find and initialize the first EMPTY spot.
-            }
+        //Find the first EMPTY spot in provide colum and assign move if the column has any EMPTY spots.
+        if (findNextAvailableSpot(col) > -1) {
+            pieces[col][findNextAvailableSpot(col)] = move;
         }
     }
 
     @Override
     public Winner findWinner() {
+
         //Check if there is any winner.
         for (int i = 0; i < NUM_OF_COLS; i++) {
             for (int j = 0; j < NUM_OF_ROWS; j++) {
+
                 Piece currentPiece = pieces[i][j]; //Take the first piece to check.
 
                 //Ensure that currentPiece is not EMPTY.
@@ -138,6 +113,8 @@ public class BoardImpl implements Board {
         //If there is no winner.
         return new Winner(Piece.EMPTY);
     }
+
+    //Method that created for AI.
 
     @Override
     public void updateMove(int col, int row, Piece move) {
@@ -168,9 +145,8 @@ public class BoardImpl implements Board {
             return null;
         }
 
-        final int random= new Random().nextInt(legalMoves.size());
+        int random= new Random().nextInt(legalMoves.size());
         return legalMoves.get(random);
-
     }
 
     public List<BoardImpl> getAllLegalNextMoves() {
@@ -191,6 +167,23 @@ public class BoardImpl implements Board {
             }
         }
         return nextMoves;
+    }
+
+    public BoardImpl(Piece[][] pieces, BoardUI boardUI) {
+
+        this.pieces=new Piece[6][5];
+
+        for (int i = 0; i < NUM_OF_COLS; i++) {
+            for (int j = 0; j < NUM_OF_ROWS; j++) {
+
+                this.pieces[i][j]=pieces[i][j];
+            }
+        }
+        this.boardUI = boardUI;
+    }
+
+    public Piece getPlayer() {
+        return player;
     }
 
     @Override

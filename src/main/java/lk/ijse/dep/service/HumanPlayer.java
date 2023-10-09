@@ -1,7 +1,6 @@
 package lk.ijse.dep.service;
 
 public class HumanPlayer extends Player {
-    private Board board;
 
     public HumanPlayer(Board newBoard) {
         super(newBoard);
