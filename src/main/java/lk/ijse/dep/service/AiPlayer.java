@@ -65,7 +65,7 @@ public class AiPlayer extends Player {
                 return result;
             }
 
-            void addChild (Node child) {
+            void addChild(Node child) {
                 children.add(child);
             }
         }
@@ -118,7 +118,7 @@ public class AiPlayer extends Player {
             return currentNode;
         }
 
-        private Node expand (Node node) {
+        private Node expand(Node node) {
             BoardImpl boardImpl = node.board;
 
             for (BoardImpl move : getAllLegalMoves(boardImpl)) {

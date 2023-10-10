@@ -9,7 +9,6 @@ public class BoardImpl implements Board {
     private Piece[][] pieces;
     private BoardUI boardUI;
     private int player;
-
     public int col;
 
     public BoardImpl(BoardUI boardUI) {
