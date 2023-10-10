@@ -12,12 +12,12 @@ public class AiPlayer extends Player {
     public void movePiece(int col) {
 
 //        do {
-
+//
 //            col =  (int) (Math.random() * 6);
-
+//
 //        } while (!(col > -1 && col < 6) || !(board.isLegalMove(col)));
 
-        MctsAlgorithm mcts = new MctsAlgorithm(board.getBoardImpl());
+        MctsAlgorithm mcts = new MctsAlgorithm((BoardImpl) board);
 
         col = mcts.doMcts();
 
@@ -52,7 +52,7 @@ public class AiPlayer extends Player {
                 this.board = board;
             }
 
-            Node getMaxValueChild() {
+            private Node getMaxValueChild() {
                 Node result = children.get(0);
 
                 for (int i = 1; i < children.size(); i++) {
@@ -76,7 +76,7 @@ public class AiPlayer extends Player {
             this.board = board;
         }
 
-        public int doMcts(){
+        private int doMcts(){
 
             int count=0;
 
@@ -89,14 +89,14 @@ public class AiPlayer extends Player {
                 Node promisingNode = select(tree);
 
                 //Expand Node
-                Node selected=promisingNode;
+                Node selected = promisingNode;
 
                 if (selected.board.getStatus()){
-                    selected= expand(promisingNode);
+                    selected = expand(promisingNode);
 
                 }
 
-                Piece resultPiece=simulate(selected);
+                Piece resultPiece = simulate(selected);
 
                 backPropagation(resultPiece,selected);
             }
@@ -117,7 +117,7 @@ public class AiPlayer extends Player {
             return node;
         }
 
-        Node expand (Node node) {
+        private Node expand (Node node) {
             BoardImpl board = node.board;
 
             for (BoardImpl move : getAllLegalMoves(board)) {
@@ -191,19 +191,25 @@ public class AiPlayer extends Player {
 
         private Node findBestNodeWithUCT(Node node) {
             int parentVisit = node.visit;
-            return Collections.max(
-                    node.children,
-                    Comparator.comparing(c -> uctValue(parentVisit,
-                            c.value, c.visit)));
-        }
+            Node bestChild = null;
+            double bestValue = Double.NEGATIVE_INFINITY;
 
-        private double uctValue(
-                int totalVisit, double nodeWinScore, int nodeVisit) {
-            if (nodeVisit == 0) {
-                return Integer.MAX_VALUE;
+            for (Node child : node.children) {
+                double uctValue;
+                if (child.visit == 0) {
+                    uctValue = Double.POSITIVE_INFINITY;
+                } else {
+                    uctValue = ((double) child.value / (double) child.visit)
+                            + 1.41 * Math.sqrt(Math.log(parentVisit) / (double) child.visit);
+                }
+
+                if (uctValue > bestValue) {
+                    bestValue = uctValue;
+                    bestChild = child;
+                }
             }
-            return ((double) nodeWinScore / (double) nodeVisit)
-                    + 1.41 * Math.sqrt(Math.log(totalVisit) / (double) nodeVisit);
+
+            return bestChild;
         }
     }
 }

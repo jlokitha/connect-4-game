@@ -186,8 +186,4 @@ public class BoardImpl implements Board {
         return player;
     }
 
-    @Override
-    public BoardImpl getBoardImpl() {
-        return this;
-    }
 }

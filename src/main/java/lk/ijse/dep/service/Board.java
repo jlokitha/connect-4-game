@@ -16,6 +16,4 @@ public interface Board {
     Winner findWinner ();
 
     void updateMove (int col, int row, Piece move);
-
-    BoardImpl getBoardImpl();
 }
