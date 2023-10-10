@@ -113,7 +113,7 @@ public class AiPlayer extends Player {
         private Node expantion(Node node) {
             BoardImpl boardImpl = node.board;
 
-            for (BoardImpl move : getAllMoves(boardImpl)) {
+            for (BoardImpl move : boardImpl.getAllMoves()) {
                 Node child = new Node(move);
                 child.parent = node;
                 node.children.add(child);
@@ -161,26 +161,6 @@ public class AiPlayer extends Player {
                 }
                 node = node.parent;
             }
-        }
-
-        private List<BoardImpl> getAllMoves(BoardImpl board) {
-
-            Piece nextPlayer = board.player == 1 ? Piece.GREEN : Piece.BLUE;
-
-            List<BoardImpl> moves = new ArrayList<>();
-
-            outerLoop:
-            for (int i = 0; i < 6; i++) {
-
-                int raw = board.findNextAvailableSpot(i);
-
-                if (raw != -1){
-                    BoardImpl legalMove = new BoardImpl(board.getPieces(), board.getBoardUI());
-                    legalMove.updateMove(i, nextPlayer);
-                    moves.add(legalMove);
-                }
-            }
-            return moves;
         }
 
         private Node maxUctNode(Node node) {

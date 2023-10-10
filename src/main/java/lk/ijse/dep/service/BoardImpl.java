@@ -134,20 +134,16 @@ public class BoardImpl implements Board {
         this.boardUI = boardUI;
     }
 
-    public Piece[][] getPieces() {
-        return pieces;
-    }
-
     public boolean getStatus(){
         return exitsLegalMoves() && findWinner().getWinningPiece() == Piece.EMPTY;
     }
 
     public BoardImpl getRandomLeagalNextMove() {
-        List<BoardImpl> legalMoves = getAllLegalNextMoves();
+        List<BoardImpl> legalMoves = getAllMoves();
         return legalMoves.isEmpty() ? null : legalMoves.get(new Random().nextInt(legalMoves.size()));
     }
 
-    public List<BoardImpl> getAllLegalNextMoves() {
+    public List<BoardImpl> getAllMoves() {
 
         Piece nextPiece = player == 1 ? Piece.GREEN:Piece.BLUE;
 
