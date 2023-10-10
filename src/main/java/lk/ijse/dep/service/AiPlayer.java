@@ -109,25 +109,25 @@ public class AiPlayer extends Player {
         }
 
         private Node select(Node tree) {
-            Node node=tree;
-            while (node.children.size()!=0){
+            Node currentNode = tree;
 
-                node = findBestNodeWithUCT(node);
+            while (!currentNode.children.isEmpty()) {
+                currentNode = maxUctNode(currentNode);
             }
-            return node;
+
+            return currentNode;
         }
 
         private Node expand (Node node) {
-            BoardImpl board = node.board;
+            BoardImpl boardImpl = node.board;
 
-            for (BoardImpl move : getAllLegalMoves(board)) {
+            for (BoardImpl move : getAllLegalMoves(boardImpl)) {
                 Node child = new Node(move);
                 child.parent = node;
                 node.addChild(child);
             }
-            Random rand = new Random();
 
-            int random = rand.nextInt(node.children.size());
+            int random = new Random().nextInt(node.children.size());
 
             return node.children.get(random);
         }
@@ -157,12 +157,14 @@ public class AiPlayer extends Player {
 
         private void backPropagation(Piece resultPiece, Node selected) {
 
-            Node node=selected;
+            Node node = selected;
 
-            while (node!=null){
+            Piece player = node.board.getPlayer() == 1 ? Piece.BLUE : Piece.GREEN;
+
+            while (node != null){
                 node.visit++;
 
-                if (node.board.getPlayer() == resultPiece){
+                if (player == resultPiece){
                     node.value++;
                 }
                 node = node.parent;
@@ -171,7 +173,7 @@ public class AiPlayer extends Player {
 
         private List<BoardImpl> getAllLegalMoves(BoardImpl board) {
 
-            Piece nextPlayer = board.getPlayer() == Piece.BLUE ? Piece.GREEN : Piece.BLUE;
+            Piece nextPlayer = board.getPlayer() == 1 ? Piece.GREEN : Piece.BLUE;
 
             List<BoardImpl> moves = new ArrayList<>();
 
@@ -189,7 +191,7 @@ public class AiPlayer extends Player {
             return moves;
         }
 
-        private Node findBestNodeWithUCT(Node node) {
+        private Node maxUctNode(Node node) {
             int parentVisit = node.visit;
             Node bestChild = null;
             double bestValue = Double.NEGATIVE_INFINITY;

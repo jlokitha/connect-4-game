@@ -8,7 +8,7 @@ public class BoardImpl implements Board {
 
     private Piece[][] pieces;
     private BoardUI boardUI;
-    private Piece player;
+    private int player;
 
     public int col;
 
@@ -72,7 +72,7 @@ public class BoardImpl implements Board {
     public void updateMove(int col, Piece move) {
 
         this.col = col;
-        this.player = move;
+        this.player = move == Piece.BLUE ? 1 : 2;
 
         //Find the first EMPTY spot in provide colum and assign move if the column has any EMPTY spots.
         if (findNextAvailableSpot(col) > -1) {
@@ -151,7 +151,7 @@ public class BoardImpl implements Board {
 
     public List<BoardImpl> getAllLegalNextMoves() {
 
-        Piece nextPiece = player == Piece.BLUE?Piece.GREEN:Piece.BLUE;
+        Piece nextPiece = player == 1 ? Piece.GREEN:Piece.BLUE;
 
         List<BoardImpl> nextMoves = new ArrayList<>();
 
@@ -182,8 +182,7 @@ public class BoardImpl implements Board {
         this.boardUI = boardUI;
     }
 
-    public Piece getPlayer() {
+    public int getPlayer() {
         return player;
     }
-
 }
