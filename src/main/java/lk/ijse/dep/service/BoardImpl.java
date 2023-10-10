@@ -8,7 +8,7 @@ public class BoardImpl implements Board {
 
     private Piece[][] pieces;
     private BoardUI boardUI;
-    private int player;
+    int player;
     public int col;
 
     public BoardImpl(BoardUI boardUI) {
@@ -113,12 +113,12 @@ public class BoardImpl implements Board {
         return new Winner(Piece.EMPTY);
     }
 
-    //Method that created for AI.
-
     @Override
     public void updateMove(int col, int row, Piece move) {
-            pieces[col][row] = move;
+        pieces[col][row] = move;
     }
+
+    //Method that created for AI.
 
     public Piece[][] getPieces() {
         return pieces;
