@@ -8,7 +8,7 @@ public class BoardImpl implements Board {
 
     private Piece[][] pieces;
     private BoardUI boardUI;
-    int player;
+    public int player;
     public int col;
 
     public BoardImpl(BoardUI boardUI) {
@@ -118,34 +118,33 @@ public class BoardImpl implements Board {
         pieces[col][row] = move;
     }
 
+
     //Method that created for AI.
+
+    public BoardImpl(Piece[][] pieces, BoardUI boardUI) {
+
+        this.pieces=new Piece[6][5];
+
+        for (int i = 0; i < NUM_OF_COLS; i++) {
+            for (int j = 0; j < NUM_OF_ROWS; j++) {
+
+                this.pieces[i][j]=pieces[i][j];
+            }
+        }
+        this.boardUI = boardUI;
+    }
 
     public Piece[][] getPieces() {
         return pieces;
     }
 
     public boolean getStatus(){
-        if (!exitsLegalMoves()){
-            return false;
-        }
-
-        Winner winner=findWinner();
-        if (winner.getWinningPiece() != Piece.EMPTY){
-
-            return false;
-        }
-        return true;
+        return exitsLegalMoves() && findWinner().getWinningPiece() == Piece.EMPTY;
     }
 
     public BoardImpl getRandomLeagalNextMove() {
-        final List<BoardImpl> legalMoves = getAllLegalNextMoves();
-
-        if (legalMoves.isEmpty()) {
-            return null;
-        }
-
-        int random= new Random().nextInt(legalMoves.size());
-        return legalMoves.get(random);
+        List<BoardImpl> legalMoves = getAllLegalNextMoves();
+        return legalMoves.isEmpty() ? null : legalMoves.get(new Random().nextInt(legalMoves.size()));
     }
 
     public List<BoardImpl> getAllLegalNextMoves() {
@@ -166,22 +165,5 @@ public class BoardImpl implements Board {
             }
         }
         return nextMoves;
-    }
-
-    public BoardImpl(Piece[][] pieces, BoardUI boardUI) {
-
-        this.pieces=new Piece[6][5];
-
-        for (int i = 0; i < NUM_OF_COLS; i++) {
-            for (int j = 0; j < NUM_OF_ROWS; j++) {
-
-                this.pieces[i][j]=pieces[i][j];
-            }
-        }
-        this.boardUI = boardUI;
-    }
-
-    public int getPlayer() {
-        return player;
     }
 }

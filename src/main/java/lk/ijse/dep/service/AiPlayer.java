@@ -17,24 +17,20 @@ public class AiPlayer extends Player {
 //
 //        } while (!(col > -1 && col < 6) || !(board.isLegalMove(col)));
 
-        MctsAlgorithm mcts = new MctsAlgorithm((BoardImpl) board);
-
-        col = mcts.doMcts();
+        MctsAlgorithm mctsAlgorithm = new MctsAlgorithm((BoardImpl) board);
+        col = mctsAlgorithm.doMcts();
 
         if (this.board.isLegalMove(col)) {
-
             this.board.updateMove(col, Piece.GREEN);
             this.board.getBoardUI().update(col, false);
 
-            if (this.board.findWinner().getWinningPiece() == Piece.EMPTY) {
+            Piece winningPiece = this.board.findWinner().getWinningPiece();
 
+            if (winningPiece == Piece.EMPTY) {
                 if (!this.board.exitsLegalMoves()) {
-
                     this.board.getBoardUI().notifyWinner(this.board.findWinner());
                 }
-
             } else {
-
                 this.board.getBoardUI().notifyWinner(this.board.findWinner());
             }
         }
@@ -64,10 +60,6 @@ public class AiPlayer extends Player {
                 }
                 return result;
             }
-
-            void addChild (Node child) {
-                children.add(child);
-            }
         }
 
         BoardImpl board;
@@ -86,17 +78,17 @@ public class AiPlayer extends Player {
                 count++;
 
                 //Select Node
-                Node promisingNode = select(tree);
+                Node promisingNode = selection(tree);
 
                 //Expand Node
                 Node selected = promisingNode;
 
                 if (selected.board.getStatus()){
-                    selected = expand(promisingNode);
+                    selected = expantion(promisingNode);
 
                 }
 
-                Piece resultPiece = simulate(selected);
+                Piece resultPiece = rollout(selected);
 
                 backPropagation(resultPiece,selected);
             }
@@ -108,7 +100,7 @@ public class AiPlayer extends Player {
             return best.board.col;
         }
 
-        private Node select(Node tree) {
+        private Node selection(Node tree) {
             Node currentNode = tree;
 
             while (!currentNode.children.isEmpty()) {
@@ -118,13 +110,13 @@ public class AiPlayer extends Player {
             return currentNode;
         }
 
-        private Node expand (Node node) {
+        private Node expantion(Node node) {
             BoardImpl boardImpl = node.board;
 
-            for (BoardImpl move : getAllLegalMoves(boardImpl)) {
+            for (BoardImpl move : getAllMoves(boardImpl)) {
                 Node child = new Node(move);
                 child.parent = node;
-                node.addChild(child);
+                node.children.add(child);
             }
 
             int random = new Random().nextInt(node.children.size());
@@ -132,7 +124,7 @@ public class AiPlayer extends Player {
             return node.children.get(random);
         }
 
-        private Piece simulate(Node promisingNode) {
+        private Piece rollout(Node promisingNode) {
 
             Node node = new Node(promisingNode.board);
             node.parent = promisingNode.parent;
@@ -148,7 +140,7 @@ public class AiPlayer extends Player {
                 BoardImpl nextMove=node.board.getRandomLeagalNextMove();
                 Node child = new Node(nextMove);
                 child.parent=node;
-                node.addChild(child);
+                node.children.add(child);
                 node=child;
             }
 
@@ -159,7 +151,7 @@ public class AiPlayer extends Player {
 
             Node node = selected;
 
-            Piece player = node.board.getPlayer() == 1 ? Piece.BLUE : Piece.GREEN;
+            Piece player = node.board.player == 1 ? Piece.BLUE : Piece.GREEN;
 
             while (node != null){
                 node.visit++;
@@ -171,9 +163,9 @@ public class AiPlayer extends Player {
             }
         }
 
-        private List<BoardImpl> getAllLegalMoves(BoardImpl board) {
+        private List<BoardImpl> getAllMoves(BoardImpl board) {
 
-            Piece nextPlayer = board.getPlayer() == 1 ? Piece.GREEN : Piece.BLUE;
+            Piece nextPlayer = board.player == 1 ? Piece.GREEN : Piece.BLUE;
 
             List<BoardImpl> moves = new ArrayList<>();
 
@@ -201,16 +193,13 @@ public class AiPlayer extends Player {
                 if (child.visit == 0) {
                     uctValue = Double.POSITIVE_INFINITY;
                 } else {
-                    uctValue = ((double) child.value / (double) child.visit)
-                            + 1.41 * Math.sqrt(Math.log(parentVisit) / (double) child.visit);
+                    uctValue = ((double) child.value / (double) child.visit) + 1.41 * Math.sqrt(Math.log(parentVisit) / (double) child.visit);
                 }
-
                 if (uctValue > bestValue) {
                     bestValue = uctValue;
                     bestChild = child;
                 }
             }
-
             return bestChild;
         }
     }
