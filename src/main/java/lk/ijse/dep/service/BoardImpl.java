@@ -13,7 +13,7 @@ public class BoardImpl implements Board {
 
     public BoardImpl(BoardUI boardUI) {
 
-        //Initialize the board array.
+        //Initialize the array that represent the board inside the code.
         pieces = new Piece[NUM_OF_COLS][NUM_OF_ROWS];
 
         //Child class object is assign to parent class variable.
@@ -22,12 +22,12 @@ public class BoardImpl implements Board {
         //Initialize all pieces in array as EMPTY.
         for (int i = 0; i < NUM_OF_COLS; i++) {
             for (int j = 0; j < NUM_OF_ROWS; j++) {
-
                 pieces[i][j] = Piece.EMPTY;
             }
         }
     }
 
+    //Return boardUI address.
     @Override
     public BoardUI getBoardUI() {
         return boardUI;
@@ -61,7 +61,7 @@ public class BoardImpl implements Board {
         //Check whole board to find there is any EMPTY spots.
         for (int i = 0; i < NUM_OF_COLS; i++) {
             if (isLegalMove(i)) {
-                return true;
+                return true; //Return true if there is.
             }
         }
         return false; //Return false if there is not.
@@ -69,29 +69,30 @@ public class BoardImpl implements Board {
 
     @Override
     public void updateMove(int col, Piece move) {
-
         this.col = col;
         this.player = move == Piece.BLUE ? 1 : 2;
 
-        //Find the first EMPTY spot in provide colum and assign move if the column has any EMPTY spots.
-        if (findNextAvailableSpot(col) > -1) {
-            pieces[col][findNextAvailableSpot(col)] = move;
-        }
+        //Find the first EMPTY spot in provide colum and assign move to the returned EMPTY row.
+        pieces[col][findNextAvailableSpot(col)] = move;
     }
 
     @Override
     public Winner findWinner() {
 
-        //Check if there is any winner.
+        //Check if there is any winner in the current board.
         for (int i = 0; i < NUM_OF_COLS; i++) {
             for (int j = 0; j < NUM_OF_ROWS; j++) {
 
-                Piece currentPiece = pieces[i][j]; //Take the first piece to check.
+                //Take one Piece at a time to check is it the winningPiece.
+                Piece currentPiece = pieces[i][j];
 
                 //Ensure that currentPiece is not EMPTY.
                 if (currentPiece != Piece.EMPTY) {
 
-                    //Horizontal check.
+                    /*
+                        First we check if we can take three columns to the right.This ensures it won't exceed the board size.
+                        After that we ensure that all the pieces in that columns are the same if so it is a win.
+                    */
                     if (i + 3 < pieces.length &&
                             currentPiece == pieces[i + 1][j] &&
                             currentPiece == pieces[i + 2][j] &&
@@ -99,7 +100,11 @@ public class BoardImpl implements Board {
                         return new Winner(currentPiece, i, j, i + 3, j);
                     }
 
-                    //Vertical check.
+                    /*
+                        First we check if we can take three rows up in the column.This ensures it won't exceed the board size.
+                        Lastly we check and confirm all the pieces are the same type in that rows.
+                        If this all are true then it is a win.
+                    */
                     if (j + 3 < pieces[0].length &&
                             currentPiece == pieces[i][j + 1] &&
                             currentPiece == pieces[i][j + 2] &&
@@ -109,7 +114,7 @@ public class BoardImpl implements Board {
                 }
             }
         }
-        //If there is no winner.
+        //If there is no winner we return EMPTY.
         return new Winner(Piece.EMPTY);
     }
 
