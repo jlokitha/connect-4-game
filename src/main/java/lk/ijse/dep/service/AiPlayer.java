@@ -237,18 +237,30 @@ public class AiPlayer extends Player {
         }
 
         private Node maxUctNode(Node node) {
+            //Retrieves the visit count of the 'node'.
             int parentVisit = node.visit;
+            //To keep track of child with the best UCT value.
             Node bestChild = null;
+            //To keep track of the highest UCT value.
             double bestValue = Double.NEGATIVE_INFINITY;
 
+
             for (Node child : node.childrenList) {
+
+                /*
+                * */
+
                 double uctValue;
+
                 if (child.visit == 0) {
                     uctValue = Double.POSITIVE_INFINITY;
                 } else {
-                    uctValue = ((double) child.value / (double) child.visit) + 1.41 * Math.sqrt(Math.log(parentVisit) / (double) child.visit);
+                    uctValue = ((double) child.value / (double) child.visit)
+                            + 1.41 * Math.sqrt(Math.log(parentVisit) / (double) child.visit);
                 }
+
                 if (uctValue > bestValue) {
+
                     bestValue = uctValue;
                     bestChild = child;
                 }
