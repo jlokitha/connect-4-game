@@ -131,7 +131,7 @@ public class BoardImpl implements Board {
 
     public BoardImpl(Piece[][] pieces, BoardUI boardUI) {
         //Declaration and initialization of the 2D array.
-        this.pieces=new Piece[6][5];
+        this.pieces=new Piece[NUM_OF_COLS][NUM_OF_ROWS];
 
         //Coping the provided array to newly declared array.
         for (int i = 0; i < NUM_OF_COLS; i++) {
