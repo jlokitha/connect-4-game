@@ -12,16 +12,25 @@ public class AiPlayer extends Player {
     public void movePiece(int col) {
 
 //        do {
-//
+//            //Generate Random number between 0 and 6.
 //            col =  (int) (Math.random() * 6);
 //
+//        /*
+//        * First we check if the generated number isn't exceed the limit.
+//        * After we check if the generated column index isn't full and there is EMPTY space within that column.
+//        **/
 //        } while (!(col > -1 && col < 6) || !(board.isLegalMove(col)));
 
+        //Create new MCTSAlgorithm object.
         MctsAlgorithm mctsAlgorithm = new MctsAlgorithm((BoardImpl) board);
+        //Find the best move that AI can play.
         col = mctsAlgorithm.doMcts();
 
         if (this.board.isLegalMove(col)) {
-            this.board.updateMove(col, Piece.GREEN);
+
+            int row = board.findNextAvailableSpot(col);
+
+            this.board.updateMove(col, row, Piece.GREEN);
             this.board.getBoardUI().update(col, false);
 
             Piece winningPiece = this.board.findWinner().getWinningPiece();
@@ -38,31 +47,45 @@ public class AiPlayer extends Player {
 
     static class MctsAlgorithm {
         static class Node {
-            BoardImpl board;
-            int value;
-            int visit;
-            Node parent;
-            List<Node> children = new ArrayList<>();
+            //Save BordImpl object reference that provided through constructor when creating a new Node object.
+            private BoardImpl board;
+            //Represent the value(how many wins does AI can have playing the current node) of the current Node.
+            private int value;
+            //Represent the times that the current node has been simulated.
+            private int visit;
+            //Save the reference of the parent value that the current node has been expanded from.
+            private Node parent;
+            //Save all the possible next moves can be played by next player.
+            private List<Node> childrenList = new ArrayList<>();
 
             public Node(BoardImpl board) {
                 this.board = board;
             }
 
             private Node getMaxValueChild() {
-                Node result = children.get(0);
 
-                for (int i = 1; i < children.size(); i++) {
+                /*
+                * This method is used to find element from children array that has highest 'value' attribute.
+                * Firstly it's take the first element(index 0) of the childrenList array to variable called maxChild.
+                * Secondly it's iterates through children array.
+                * Inside the if condition its compare 'value' attributes of every element in childrenList and save the Node with max 'value' to maxChild variable.
+                * Lastly its return the maxChild reference.
+                * */
 
-                    if (children.get(i).value > result.value) {
+                Node maxChild = childrenList.get(0);
 
-                        result = children.get(i);
+                for (int i = 1; i < childrenList.size(); i++) {
+
+                    if (childrenList.get(i).value > maxChild.value) {
+
+                        maxChild = childrenList.get(i);
                     }
                 }
-                return result;
+                return maxChild;
             }
         }
 
-        BoardImpl board;
+        private BoardImpl board;
 
         public MctsAlgorithm(BoardImpl board) {
             this.board = board;
@@ -70,12 +93,9 @@ public class AiPlayer extends Player {
 
         private int doMcts(){
 
-            int count=0;
-
             Node tree= new Node(board);
 
-            while (count<4000){
-                count++;
+            for (int i = 0; i < 4000; i++){
 
                 //Select Node
                 Node promisingNode = selection(tree);
@@ -84,13 +104,12 @@ public class AiPlayer extends Player {
                 Node selected = promisingNode;
 
                 if (selected.board.getStatus()){
-                    selected = expantion(promisingNode);
+                    selected = expansion(promisingNode);
 
                 }
 
                 Piece resultPiece = rollout(selected);
-
-                backPropagation(resultPiece,selected);
+                backPropagation(resultPiece, selected);
             }
 
             Node best= tree.getMaxValueChild();
@@ -101,27 +120,45 @@ public class AiPlayer extends Player {
         }
 
         private Node selection(Node tree) {
+
+            /*
+            * This method preform the selection phase of the MCTS algorithm.
+            * First reference of the 'tree' is assigned to 'currentNode'.
+            * After we iterate through a while loop until 'childrenList' of the currentNode is empty.
+            * Inside the loop we assign Node value that return from maxUctNode method.
+            * Lastly we returned the reference of the currentNode.
+            * */
+
             Node currentNode = tree;
 
-            while (!currentNode.children.isEmpty()) {
+            while (!currentNode.childrenList.isEmpty()) {
                 currentNode = maxUctNode(currentNode);
             }
 
             return currentNode;
         }
 
-        private Node expantion(Node node) {
+        private Node expansion(Node node) {
+
+            /*
+            * First we assign 'board' attribute to 'boardImpl' reference from provided 'node' object.
+            * After we iterated through all possible next move that returned from getAllMoves method.
+            * We assign every move to child reference one at a time and address of 'node' object is assign to parent attribute of every child.
+            * Next we add every child that returned from getAllMoves method to childrenList in 'node' object.
+            * Lastly we generate random number between 0 and size of the childrenList array and return the element of generated random number from childrenList array.
+            * */
+
             BoardImpl boardImpl = node.board;
 
             for (BoardImpl move : boardImpl.getAllMoves()) {
                 Node child = new Node(move);
                 child.parent = node;
-                node.children.add(child);
+                node.childrenList.add(child);
             }
 
-            int random = new Random().nextInt(node.children.size());
+            int random = new Random().nextInt(node.childrenList.size());
 
-            return node.children.get(random);
+            return node.childrenList.get(random);
         }
 
         private Piece rollout(Node promisingNode) {
@@ -136,11 +173,12 @@ public class AiPlayer extends Player {
 
                 return node.board.findWinner().getWinningPiece();
             }
+
             while (node.board.getStatus()){
                 BoardImpl nextMove=node.board.getRandomLeagalNextMove();
                 Node child = new Node(nextMove);
                 child.parent=node;
-                node.children.add(child);
+                node.childrenList.add(child);
                 node=child;
             }
 
@@ -157,6 +195,7 @@ public class AiPlayer extends Player {
                 node.visit++;
 
                 if (player == resultPiece){
+
                     node.value++;
                 }
                 node = node.parent;
@@ -168,7 +207,7 @@ public class AiPlayer extends Player {
             Node bestChild = null;
             double bestValue = Double.NEGATIVE_INFINITY;
 
-            for (Node child : node.children) {
+            for (Node child : node.childrenList) {
                 double uctValue;
                 if (child.visit == 0) {
                     uctValue = Double.POSITIVE_INFINITY;

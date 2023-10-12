@@ -90,9 +90,9 @@ public class BoardImpl implements Board {
                 if (currentPiece != Piece.EMPTY) {
 
                     /*
-                        First we check if we can take three columns to the right.This ensures it won't exceed the board size.
-                        After that we ensure that all the pieces in that columns are the same if so it is a win.
-                    */
+                    * First we check if we can take three columns to the right.This ensures it won't exceed the board size.
+                    * After that we ensure that all the pieces in that columns are the same if so it is a win.
+                    **/
                     if (i + 3 < pieces.length &&
                             currentPiece == pieces[i + 1][j] &&
                             currentPiece == pieces[i + 2][j] &&
@@ -101,10 +101,10 @@ public class BoardImpl implements Board {
                     }
 
                     /*
-                        First we check if we can take three rows up in the column.This ensures it won't exceed the board size.
-                        Lastly we check and confirm all the pieces are the same type in that rows.
-                        If this all are true then it is a win.
-                    */
+                    * First we check if we can take three rows up in the column.This ensures it won't exceed the board size.
+                    * Lastly we check and confirm all the pieces are the same type in that rows.
+                    * If this all are true then it is a win.
+                    **/
                     if (j + 3 < pieces[0].length &&
                             currentPiece == pieces[i][j + 1] &&
                             currentPiece == pieces[i][j + 2] &&
@@ -120,11 +120,11 @@ public class BoardImpl implements Board {
 
     @Override
     public void updateMove(int col, int row, Piece move) {
+        //Update the board by placing move in provided column and row.
         pieces[col][row] = move;
     }
 
-
-    //Method that created for AI.
+    //Method that created for MCTS algorithm.
 
     public BoardImpl(Piece[][] pieces, BoardUI boardUI) {
 
