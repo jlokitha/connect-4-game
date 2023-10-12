@@ -66,12 +66,12 @@ public class AiPlayer extends Player {
             private Node getMaxValueChild() {
 
                 /*
-                * This method is used to find element from children array that has highest 'value' attribute.
+                * This method is used to find element from children array that has highest 'uct' attribute.
                 * Firstly its take the first element(index 0) of the childrenList array to
                 * variable called maxChild.
                 * Secondly it's iterates through children array.
-                * Inside the if condition its compare 'value' attributes of every element in
-                * childrenList and save the Node with max 'value' to maxChild variable.
+                * Inside the if condition its compare 'uct' attributes of every element in
+                * childrenList and save the Node with max 'uct' to maxChild variable.
                 * Lastly its return the maxChild reference.
                 **/
 
@@ -266,10 +266,14 @@ public class AiPlayer extends Player {
                 **/
                 if (child.visit == 0) {
                     uctValue = Double.POSITIVE_INFINITY;
+
+                    //Save the UCT value to the 'uct' variable.
                     child.uct = uctValue;
                 } else {
                     uctValue = ((double) child.value / (double) child.visit)
                             + 1.41 * Math.sqrt(Math.log(parentVisit) / (double) child.visit);
+
+                    //Save the UCT value to the 'uct' variable.
                     child.uct = uctValue;
                 }
 
