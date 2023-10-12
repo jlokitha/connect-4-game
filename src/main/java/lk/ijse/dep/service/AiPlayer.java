@@ -24,20 +24,21 @@ public class AiPlayer extends Player {
         //Create new MCTSAlgorithm object.
         MctsAlgorithm mctsAlgorithm = new MctsAlgorithm((BoardImpl) board);
         //Find the best move that AI can play.
-        col = mctsAlgorithm.doMcts();
+        col = mctsAlgorithm.mctsStart();
 
+        //Check if there is a EMPTY spot in the column.
         if (this.board.isLegalMove(col)) {
 
+            //Update the column in the board.
             this.board.updateMove(col, board.findNextAvailableSpot(col), Piece.GREEN);
             this.board.getBoardUI().update(col, false);
 
-            Piece winningPiece = this.board.findWinner().getWinningPiece();
-
-            if (winningPiece == Piece.EMPTY) {
-                if (!this.board.existLegalMoves()) {
-                    this.board.getBoardUI().notifyWinner(this.board.findWinner());
-                }
-            } else {
+            /*
+             * First it check if the winningPiece is EMPTY.If it is that means there is no winner and the game is tied.
+             * Second it check if there is any legal moves left in the whole board.
+             * If there is not that means game is over, and we need to check is AI or Human wins or that game is tied.
+             **/
+            if (this.board.findWinner().getWinningPiece() != Piece.EMPTY || !this.board.existLegalMoves()) {
                 this.board.getBoardUI().notifyWinner(this.board.findWinner());
             }
         }
@@ -91,31 +92,35 @@ public class AiPlayer extends Player {
             this.board = board;
         }
 
-        private int doMcts(){
+        private int mctsStart(){
 
+            //This represents the current state of the game.
             Node tree= new Node(board);
 
             for (int i = 0; i < 4000; i++){
 
-                //Select Node
+                //Selection phase of the MCTS.
                 Node promisingNode = selection(tree);
 
-                //Expand Node
                 Node selected = promisingNode;
 
+                //Expansion phase of the MCTS.
                 if (selected.board.status()){
                     selected = expansion(promisingNode);
 
                 }
-
+                //Simulation phase of the MCTS.
                 Piece resultPiece = rollout(selected);
+
+                //Backpropagation phase of the MCTS.
                 backPropagation(resultPiece, selected);
             }
-
+            //Get child with the maximum value.
             Node best= tree.getMaxValueChild();
 
             System.out.println("Value " + best.value + " / Visits " + best.visit);
 
+            //Return the column index AI need to play.
             return best.board.col;
         }
 
