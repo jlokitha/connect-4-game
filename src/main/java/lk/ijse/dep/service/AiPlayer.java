@@ -70,7 +70,7 @@ public class AiPlayer extends Player {
                 * Inside the if condition its compare 'value' attributes of every element in
                 * childrenList and save the Node with max 'value' to maxChild variable.
                 * Lastly its return the maxChild reference.
-                * */
+                **/
 
                 Node maxChild = childrenList.get(0);
 
@@ -127,7 +127,7 @@ public class AiPlayer extends Player {
             * After we iterate through a while loop until 'childrenList' of the currentNode is empty.
             * Inside the loop we assign Node value that return from maxUctNode method.
             * Lastly we returned the reference of the currentNode.
-            * */
+            **/
 
             Node currentNode = tree;
 
@@ -148,7 +148,7 @@ public class AiPlayer extends Player {
             * Next we add every child that returned from getAllMoves method to childrenList in 'node' object.
             * Lastly we generate random number between 0 and size of the childrenList array and return
             * the element of generated random number from childrenList array.
-            * */
+            **/
 
             BoardImpl boardImpl = node.board;
 
@@ -169,7 +169,7 @@ public class AiPlayer extends Player {
             * First we duplicate the state represented by 'promisingNode' by creating a new node with the
             *  board attribute of the 'promisingNode' and assign it to 'node' reference, and we set the
             *  parent attribute of 'node' with the same value of 'promising' node parent attribute value.
-            * */
+            **/
 
             Node node = new Node(promisingNode.board);
             node.parent = promisingNode.parent;
@@ -183,7 +183,7 @@ public class AiPlayer extends Player {
             * minimum number that integer can contain.
             * This is done to show AI playing this move will be lost of AI.
             * After that we return the winningPiece from the method in this case it is BLUE.
-            * */
+            **/
             if (winner.getWinningPiece() == Piece.BLUE){
                 node.parent.value = Integer.MIN_VALUE;
 
@@ -197,7 +197,7 @@ public class AiPlayer extends Player {
             * child reference and set the reference of the node to the parent attribute in child.
             * We add the child to the childrenList array in 'node' and assign child to the node.
             * This means game is progressing to the next state.
-            * */
+            **/
             while (node.board.getStatus()) {
                 BoardImpl nextMove = node.board.getRandomLeagalNextMove();
                 Node child = new Node(nextMove);
@@ -244,14 +244,19 @@ public class AiPlayer extends Player {
             //To keep track of the highest UCT value.
             double bestValue = Double.NEGATIVE_INFINITY;
 
-
+            //This for loop iterates through the childrenList of provided node.
             for (Node child : node.childrenList) {
 
-                /*
-                * */
-
+                //Store calculated UCT value of the current child.
                 double uctValue;
 
+                /*
+                * This if condition check whether the current child have been simulated at least one time.
+                * If it isn't visited at least once we set the uctValue to POSITIVE_INFINITY, indicating that
+                * this node isn't visited and prioritized for exploration.
+                *
+                * But if it is visited we calculated the uct for each child.
+                **/
                 if (child.visit == 0) {
                     uctValue = Double.POSITIVE_INFINITY;
                 } else {
@@ -259,12 +264,17 @@ public class AiPlayer extends Player {
                             + 1.41 * Math.sqrt(Math.log(parentVisit) / (double) child.visit);
                 }
 
+                /*
+                * If the 'uctValue' of current child is greater-than value of 'bestValue' we assign UCT value
+                * of current child to the 'bestValue' variable and current child to the 'bestChild' reference.
+                **/
                 if (uctValue > bestValue) {
 
                     bestValue = uctValue;
                     bestChild = child;
                 }
             }
+            //Lastly we return the bestChild reference.
             return bestChild;
         }
     }
