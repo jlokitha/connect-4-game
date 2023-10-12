@@ -9,7 +9,7 @@ public interface Board {
     int findNextAvailableSpot (int col);
     boolean isLegalMove (int col);
 
-    boolean exitsLegalMoves ();
+    boolean existLegalMoves();
 
     void updateMove (int col, Piece move);
 

@@ -56,7 +56,7 @@ public class BoardImpl implements Board {
     }
 
     @Override
-    public boolean exitsLegalMoves() {
+    public boolean existLegalMoves() {
 
         //Check whole board to find there is any EMPTY spots.
         for (int i = 0; i < NUM_OF_COLS; i++) {
@@ -130,34 +130,59 @@ public class BoardImpl implements Board {
     //Method that created for MCTS algorithm.
 
     public BoardImpl(Piece[][] pieces, BoardUI boardUI) {
-
+        //Declaration and initialization of the 2D array.
         this.pieces=new Piece[6][5];
 
+        //Coping the provided array to newly declared array.
         for (int i = 0; i < NUM_OF_COLS; i++) {
             for (int j = 0; j < NUM_OF_ROWS; j++) {
 
                 this.pieces[i][j]=pieces[i][j];
             }
         }
+        //Assign the 'boarsUI' instance variable with provided reference.
         this.boardUI = boardUI;
     }
 
-    public boolean getStatus(){
-        return exitsLegalMoves() && findWinner().getWinningPiece() == Piece.EMPTY;
+    public boolean status(){
+        //This method ensure that there is still left legal moves in the board and human or AI isn't won yet.
+        return existLegalMoves() && findWinner().getWinningPiece() == Piece.EMPTY;
     }
 
-    public BoardImpl getRandomLeagalNextMove() {
+    public BoardImpl getRandomNextMove() {
+        //Create new ArrayList to catch the ArrayList that return from getAllMoves method.
         List<BoardImpl> legalMoves = getAllMoves();
+
+        /*
+        * In here we check if the returned array is empty or not.
+        * If it is empty that means there aren't any legal moves left, so we returned null.
+        * But if array isn't null we generate a random number between 0 and size of the 'legalMoves' array
+        * and return the element of the generated number.
+        **/
         return legalMoves.isEmpty() ? null : legalMoves.get(new Random().nextInt(legalMoves.size()));
     }
 
     public List<BoardImpl> getAllMoves() {
 
+        //Store the next player.
         Piece nextPiece = player == 1 ? Piece.GREEN:Piece.BLUE;
-
+        //To save all the next moves.
         List<BoardImpl> nextMoves = new ArrayList<>();
 
         for (int i = 0; i < NUM_OF_COLS; i++) {
+
+            /*
+            * This for loop iterate through all the columns in the board and find each column has any empty spot
+            * using findNextAvailableSpot method.
+            * This method return num between 0 and 5 if the provided column has any empty spot if it doesn't
+            * it return -1.
+            * After we check is there is any empty spot using if condition and if it is we create a new
+            * 'BoardImpl' object using current board and current 'BoardUI' as arguments, this copy the current
+            * state of the board to the newly created object.
+            * After we 'nextPiece' and current column to updateMove method to represent simulation of the move and
+            * we add the potential next move to the 'nextMoves' array.
+            * Lastly we return the 'nextMove' array.
+            **/
 
             int raw = findNextAvailableSpot(i);
 

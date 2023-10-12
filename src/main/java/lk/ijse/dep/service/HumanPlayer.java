@@ -20,7 +20,7 @@ public class HumanPlayer extends Player {
             * Second it check if there is any legal moves left in the whole board.
             * If there is not that means game is over, and we need to check is AI or Human wins or that game is tied.
             **/
-            if (board.findWinner().getWinningPiece() != Piece.EMPTY || !board.exitsLegalMoves()) {
+            if (board.findWinner().getWinningPiece() != Piece.EMPTY || !board.existLegalMoves()) {
 
                 //notifyWinner method show who wins according to the returned value of findWinner method.
                 board.getBoardUI().notifyWinner(board.findWinner());

@@ -34,7 +34,7 @@ public class AiPlayer extends Player {
             Piece winningPiece = this.board.findWinner().getWinningPiece();
 
             if (winningPiece == Piece.EMPTY) {
-                if (!this.board.exitsLegalMoves()) {
+                if (!this.board.existLegalMoves()) {
                     this.board.getBoardUI().notifyWinner(this.board.findWinner());
                 }
             } else {
@@ -103,7 +103,7 @@ public class AiPlayer extends Player {
                 //Expand Node
                 Node selected = promisingNode;
 
-                if (selected.board.getStatus()){
+                if (selected.board.status()){
                     selected = expansion(promisingNode);
 
                 }
@@ -198,8 +198,8 @@ public class AiPlayer extends Player {
             * We add the child to the childrenList array in 'node' and assign child to the node.
             * This means game is progressing to the next state.
             **/
-            while (node.board.getStatus()) {
-                BoardImpl nextMove = node.board.getRandomLeagalNextMove();
+            while (node.board.status()) {
+                BoardImpl nextMove = node.board.getRandomNextMove();
                 Node child = new Node(nextMove);
                 child.parent = node;
                 node.childrenList.add(child);
