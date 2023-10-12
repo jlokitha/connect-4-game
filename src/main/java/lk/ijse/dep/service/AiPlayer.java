@@ -54,6 +54,8 @@ public class AiPlayer extends Player {
             private int visit;
             //Save the reference of the parent value that the current node has been expanded from.
             private Node parent;
+            //Store the UCT value of the current node.
+            private double uct;
             //Save all the possible next moves can be played by next player.
             private final List<Node> childrenList = new ArrayList<>();
             //Constructor of the Node class.
@@ -77,7 +79,7 @@ public class AiPlayer extends Player {
 
                 for (int i = 1; i < childrenList.size(); i++) {
 
-                    if (childrenList.get(i).value > maxChild.value) {
+                    if (childrenList.get(i).uct > maxChild.uct) {
 
                         maxChild = childrenList.get(i);
                     }
@@ -264,9 +266,11 @@ public class AiPlayer extends Player {
                 **/
                 if (child.visit == 0) {
                     uctValue = Double.POSITIVE_INFINITY;
+                    child.uct = uctValue;
                 } else {
                     uctValue = ((double) child.value / (double) child.visit)
                             + 1.41 * Math.sqrt(Math.log(parentVisit) / (double) child.visit);
+                    child.uct = uctValue;
                 }
 
                 /*
