@@ -56,7 +56,7 @@ public class AiPlayer extends Player {
             private Node parent;
             //Save all the possible next moves can be played by next player.
             private final List<Node> childrenList = new ArrayList<>();
-
+            //Constructor of the Node class.
             public Node(BoardImpl board) {
                 this.board = board;
             }
@@ -87,7 +87,7 @@ public class AiPlayer extends Player {
         }
 
         private final BoardImpl board;
-
+        //Constructor for MctsAlgorithm class.
         public MctsAlgorithm(BoardImpl board) {
             this.board = board;
         }

@@ -1,7 +1,6 @@
 package lk.ijse.dep.service;
 
 public class Winner {
-
     private Piece winningPiece;
     private int col1;
     private int row1;

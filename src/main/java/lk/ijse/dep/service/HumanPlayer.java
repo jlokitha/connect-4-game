@@ -2,6 +2,7 @@ package lk.ijse.dep.service;
 
 public class HumanPlayer extends Player {
 
+    //Constructor for HumanPlayer class.
     public HumanPlayer(Board newBoard) {
         super(newBoard);
     }
