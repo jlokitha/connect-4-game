@@ -120,6 +120,9 @@ public class BoardImpl implements Board {
 
     @Override
     public void updateMove(int col, int row, Piece move) {
+        this.col = col;
+        this.player = move == Piece.BLUE ? 1 : 2;
+
         //Update the board by placing move in provided column and row.
         pieces[col][row] = move;
     }

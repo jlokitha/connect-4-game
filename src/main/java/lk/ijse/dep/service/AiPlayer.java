@@ -28,9 +28,7 @@ public class AiPlayer extends Player {
 
         if (this.board.isLegalMove(col)) {
 
-            int row = board.findNextAvailableSpot(col);
-
-            this.board.updateMove(col, row, Piece.GREEN);
+            this.board.updateMove(col, board.findNextAvailableSpot(col), Piece.GREEN);
             this.board.getBoardUI().update(col, false);
 
             Piece winningPiece = this.board.findWinner().getWinningPiece();
@@ -66,9 +64,11 @@ public class AiPlayer extends Player {
 
                 /*
                 * This method is used to find element from children array that has highest 'value' attribute.
-                * Firstly it's take the first element(index 0) of the childrenList array to variable called maxChild.
+                * Firstly its take the first element(index 0) of the childrenList array to
+                * variable called maxChild.
                 * Secondly it's iterates through children array.
-                * Inside the if condition its compare 'value' attributes of every element in childrenList and save the Node with max 'value' to maxChild variable.
+                * Inside the if condition its compare 'value' attributes of every element in
+                * childrenList and save the Node with max 'value' to maxChild variable.
                 * Lastly its return the maxChild reference.
                 * */
 
@@ -143,9 +143,11 @@ public class AiPlayer extends Player {
             /*
             * First we assign 'board' attribute to 'boardImpl' reference from provided 'node' object.
             * After we iterated through all possible next move that returned from getAllMoves method.
-            * We assign every move to child reference one at a time and address of 'node' object is assign to parent attribute of every child.
+            * We assign every move to child reference one at a time and address of 'node' object is assign to
+            * parent attribute of every child.
             * Next we add every child that returned from getAllMoves method to childrenList in 'node' object.
-            * Lastly we generate random number between 0 and size of the childrenList array and return the element of generated random number from childrenList array.
+            * Lastly we generate random number between 0 and size of the childrenList array and return
+            * the element of generated random number from childrenList array.
             * */
 
             BoardImpl boardImpl = node.board;
@@ -163,29 +165,61 @@ public class AiPlayer extends Player {
 
         private Piece rollout(Node promisingNode) {
 
+            /*
+            * First we duplicate the state represented by 'promisingNode' by creating a new node with the
+            *  board attribute of the 'promisingNode' and assign it to 'node' reference, and we set the
+            *  parent attribute of 'node' with the same value of 'promising' node parent attribute value.
+            * */
+
             Node node = new Node(promisingNode.board);
             node.parent = promisingNode.parent;
 
+            //Check if the current board has any winner.
             Winner winner = node.board.findWinner();
 
+            /*
+            * This if condition check to find is the winner is BLUE(human).
+            * If so that means AI is lost, so we set the value of parent object of the 'node' class to
+            * minimum number that integer can contain.
+            * This is done to show AI playing this move will be lost of AI.
+            * After that we return the winningPiece from the method in this case it is BLUE.
+            * */
             if (winner.getWinningPiece() == Piece.BLUE){
                 node.parent.value = Integer.MIN_VALUE;
 
                 return node.board.findWinner().getWinningPiece();
             }
 
-            while (node.board.getStatus()){
-                BoardImpl nextMove=node.board.getRandomLeagalNextMove();
+            /*
+            * This while loop continue until game represented by 'node' meet the terminal state(until game ends).
+            * After we find a random move from current board state and assign it to 'nextMove' reference.
+            * Now we create a new Node object with the 'nextMove' as argument that we get and assign it to
+            * child reference and set the reference of the node to the parent attribute in child.
+            * We add the child to the childrenList array in 'node' and assign child to the node.
+            * This means game is progressing to the next state.
+            * */
+            while (node.board.getStatus()) {
+                BoardImpl nextMove = node.board.getRandomLeagalNextMove();
                 Node child = new Node(nextMove);
-                child.parent=node;
+                child.parent = node;
                 node.childrenList.add(child);
-                node=child;
+                node = child;
             }
 
+            //Lastly we return the winningPiece of the node that represent the terminal state.
             return node.board.findWinner().getWinningPiece();
         }
 
         private void backPropagation(Piece resultPiece, Node selected) {
+
+            /*
+            * First we assign reference of the 'selected' to the node for avoid modifying the selected attribute.
+            * After we find who is the current player and assign that to player reference.
+            * Now we initiate a while loop that loop until the node is null(until we find the root Node).
+            * We increment the attribute 'visit' and we check that current player and the player that won are the same
+            * if so we increment the 'value' attribute too.
+            * Lastly we assign reference of the 'parent' attribute to the 'node', effectively moving up the tree.
+            **/
 
             Node node = selected;
 
