@@ -46,7 +46,7 @@ public class AiPlayer extends Player {
     static class MctsAlgorithm {
         static class Node {
             //Save BordImpl object reference that provided through constructor when creating a new Node object.
-            private BoardImpl board;
+            private final BoardImpl board;
             //Represent the value(how many wins does AI can have playing the current node) of the current Node.
             private int value;
             //Represent the times that the current node has been simulated.
@@ -54,7 +54,7 @@ public class AiPlayer extends Player {
             //Save the reference of the parent value that the current node has been expanded from.
             private Node parent;
             //Save all the possible next moves can be played by next player.
-            private List<Node> childrenList = new ArrayList<>();
+            private final List<Node> childrenList = new ArrayList<>();
 
             public Node(BoardImpl board) {
                 this.board = board;
@@ -85,7 +85,7 @@ public class AiPlayer extends Player {
             }
         }
 
-        private BoardImpl board;
+        private final BoardImpl board;
 
         public MctsAlgorithm(BoardImpl board) {
             this.board = board;

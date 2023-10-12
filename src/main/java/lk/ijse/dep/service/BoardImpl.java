@@ -6,8 +6,8 @@ import java.util.Random;
 
 public class BoardImpl implements Board {
 
-    private Piece[][] pieces;
-    private BoardUI boardUI;
+    private final Piece[][] pieces;
+    private final BoardUI boardUI;
     public int player;
     public int col;
 
@@ -136,7 +136,6 @@ public class BoardImpl implements Board {
         //Coping the provided array to newly declared array.
         for (int i = 0; i < NUM_OF_COLS; i++) {
             for (int j = 0; j < NUM_OF_ROWS; j++) {
-
                 this.pieces[i][j]=pieces[i][j];
             }
         }
@@ -179,7 +178,7 @@ public class BoardImpl implements Board {
             * After we check is there is any empty spot using if condition and if it is we create a new
             * 'BoardImpl' object using current board and current 'BoardUI' as arguments, this copy the current
             * state of the board to the newly created object.
-            * After we 'nextPiece' and current column to updateMove method to represent simulation of the move and
+            * After we 'nextPiece' and current column to updateMove method to represent simulation of the move, and
             * we add the potential next move to the 'nextMoves' array.
             * Lastly we return the 'nextMove' array.
             **/
